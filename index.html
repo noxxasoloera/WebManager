@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Role-based Dashboard</title>
+<style>
+body{margin:0;font-family:'Segoe UI',Tahoma,sans-serif;background:#111;color:#fff;}
+.overlay{padding:20px;min-height:100vh;background:linear-gradient(135deg,#222,#000);}
+.card{background:rgba(0,0,0,0.8);padding:20px;border-radius:12px;max-width:700px;margin:20px auto;box-shadow:0 0 20px #0ff;}
+h1,h3{text-align:center;margin:0 0 15px;color:#0ff;}
+label{display:block;margin:8px 0 4px;}
+input,select,button{width:100%;padding:10px;border-radius:8px;margin-bottom:10px;border:1px solid #0ff;background:#000;color:#0ff;}
+button.primary{background:linear-gradient(90deg,red,blue);border:none;color:#fff;font-weight:bold;cursor:pointer;transition:0.3s;}
+button.primary:hover{filter:brightness(1.2);transform:scale(1.05);}
+button.danger{background:#ff1744;color:#fff;border:none;font-weight:bold;cursor:pointer;padding:8px 12px;border-radius:6px;transition:0.3s;box-shadow:0 0 8px #ff1744,0 0 12px #ff1744 inset;}
+button.danger:hover{box-shadow:0 0 16px #ff1744,0 0 20px #ff1744 inset;transform:scale(1.05);}
+table{width:100%;border-collapse:collapse;margin-top:10px;}
+th,td{padding:8px;border-bottom:1px solid #0ff;text-align:left;}
+.actions{display:flex;gap:6px;}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+<div class="overlay">
+
+<!-- LOGIN -->
+<div class="card" id="loginCard">
+<h1>Login Manager</h1>
+<label>Username</label>
+<input id="loginUser" placeholder="username"/>
+<label>Password</label>
+<input id="loginPass" type="password" placeholder="password"/>
+<button id="btnLogin" class="primary">Login</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="card hidden" id="dashboardCard">
+<h1>Dashboard</h1>
+<div id="profileInfo"></div>
+<div style="display:flex;gap:10px;">
+<button id="btnProfile" class="primary">Profile</button>
+<button id="btnTokens" class="primary">Tokens</button>
+<button id="btnLogout" class="primary">Logout</button>
+</div>
+<div id="contentArea"></div>
+</div>
+
+<script>
+// ===== HELPERS =====
+function canCreateRole(role,target){
+  if(role==='owner') return true;
+  if(role==='CEO') return target!=='owner';
+  if(role==='mods') return ['partner','reseller'].includes(target);
+  if(role==='partner') return target==='reseller';
+  return false;
+}
+
+let users=[], tokens=[], current=null;
+
+// ===== LOAD JSON =====
+async function loadUsers(){ 
+  const res=await fetch("users.json");
+  users=await res.json();
+}
+async function loadTokens(){ 
+  const res=await fetch("tokens.json");
+  tokens=await res.json();
+}
+
+// ===== LOGIN =====
+const loginCard = document.getElementById("loginCard");
+const dashboardCard = document.getElementById("dashboardCard");
+const btnLogin = document.getElementById("btnLogin");
+
+btnLogin.onclick=async()=>{
+  await loadUsers();
+  const u=document.getElementById("loginUser").value.trim();
+  const p=document.getElementById("loginPass").value;
+  const found = users.find(x=>x.username===u && x.password===p);
+  if(!found){console.log("❌ Login gagal 😢");return;}
+  current=found;
+  loginCard.classList.add("hidden");
+  dashboardCard.classList.remove("hidden");
+  await loadTokens();
+  renderDashboard();
+};
+
+// ===== DASHBOARD =====
+const profileInfo = document.getElementById("profileInfo");
+const contentArea = document.getElementById("contentArea");
+
+function renderDashboard(){
+  profileInfo.innerHTML = `<b>${current.username}</b> (role: ${current.role}, exp: ${current.exp}, time: ${new Date().toLocaleString()})`;
+  showProfile();
+}
+
+document.getElementById("btnLogout").onclick = ()=>{
+  current = null;
+  loginCard.classList.remove("hidden");
+  dashboardCard.classList.add("hidden");
+  contentArea.innerHTML="";
+  document.getElementById("loginUser").value="";
+  document.getElementById("loginPass").value="";
+};
+
+document.getElementById("btnProfile").onclick = ()=>{showProfile();};
+document.getElementById("btnTokens").onclick = ()=>{showTokens();};
+
+// ===== PROFILE =====
+function showProfile(){
+  contentArea.innerHTML="";
+  const tbl = document.createElement("table");
+  const thead = document.createElement("thead");
+  thead.innerHTML="<tr><th>Username</th><th>Role</th><th>Exp</th><th>Action</th></tr>";
+  tbl.appendChild(thead);
+  const tbody = document.createElement("tbody");
+  users.forEach((u,i)=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML=`<td>${u.username}</td><td>${u.role}</td><td>${u.exp}</td>`;
+    const td = document.createElement("td");
+    if(['owner','CEO'].includes(current.role)){
+      const btn = document.createElement("button");
+      btn.className="danger"; btn.textContent="Delete";
+      btn.onclick=()=>{ if(confirm("Delete "+u.username+"?")){ users.splice(i,1); showProfile(); } };
+      td.appendChild(btn);
+    }
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);
+  contentArea.appendChild(tbl);
+
+  // CREATE ACCOUNT
+  if(canCreateRole(current.role,'reseller')){
+    const div = document.createElement("div");
+    div.innerHTML=`
+      <h3>Create Account</h3>
+      <input id="newUser" placeholder="username"/>
+      <input id="newPass" placeholder="password"/>
+      <select id="newRole">
+        <option>owner</option>
+        <option>CEO</option>
+        <option>mods</option>
+        <option>partner</option>
+        <option>reseller</option>
+      </select>
+      <input id="newExp" placeholder="YYYY-MM-DD"/>
+      <button id="btnCreate" class="primary">Create Account</button>
+    `;
+    contentArea.appendChild(div);
+    document.getElementById("btnCreate").onclick=()=>{
+      const username=document.getElementById("newUser").value.trim();
+      const password=document.getElementById("newPass").value;
+      const role=document.getElementById("newRole").value;
+      const exp=document.getElementById("newExp").value;
+      if(!canCreateRole(current.role,role)) return console.log("❌ Tidak bisa buat role ini");
+      if(users.find(u=>u.username===username)) return console.log("❌ Username sudah ada");
+      users.push({username,password,role,exp});
+      showProfile();
+    };
+  }
+}
+
+// ===== TOKENS =====
+function showTokens(){
+  contentArea.innerHTML="";
+  if(['owner','CEO','mods','partner','reseller'].includes(current.role)){
+    const div = document.createElement("div");
+    div.innerHTML=`<input id="tokenValue" placeholder="Token value"/><button id="btnAddToken" class="primary">Add Token</button>`;
+    contentArea.appendChild(div);
+    document.getElementById("btnAddToken").onclick=()=>{
+      const val=document.getElementById("tokenValue").value.trim();
+      if(!val) return;
+      tokens.push({value:val, owner:current.username});
+      showTokens();
+    };
+  }
+  const tbl = document.createElement("table");
+  const thead = document.createElement("thead");
+  thead.innerHTML="<tr><th>Token</th><th>Owner</th><th>Action</th></tr>";
+  tbl.appendChild(thead);
+  const tbody = document.createElement("tbody");
+  tokens.forEach((t,i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${t.value}</td><td>${t.owner}</td>`;
+    const td=document.createElement("td");
+    if(['owner','CEO'].includes(current.role)){
+      const btn=document.createElement("button");
+      btn.className="danger"; btn.textContent="Delete";
+      btn.onclick=()=>{ if(confirm("Delete token?")){ tokens.splice(i,1); showTokens(); } };
+      td.appendChild(btn);
+    }
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);
+  contentArea.appendChild(tbl);
+}
+</script>
+</body>
+</html>

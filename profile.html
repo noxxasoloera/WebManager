@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Profile</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="overlay">
+    <div class="card">
+      <h1>👤 Profile</h1>
+
+      <!-- Profil user login -->
+      <div id="profile"></div>
+      <div id="clock" style="text-align:center;margin:10px 0;font-weight:bold;color:#00e5ff;"></div>
+
+      <!-- Tabel semua user -->
+      <h3>👥 Semua User</h3>
+      <table>
+        <thead>
+          <tr><th>Username</th><th>Role</th><th>Exp</th><th>Action</th></tr>
+        </thead>
+        <tbody id="usersTbody"></tbody>
+      </table>
+
+      <!-- Form create akun -->
+      <div id="userControls" class="hidden">
+        <h3>➕ Create Account</h3>
+        <input id="newUser" placeholder="username">
+        <input id="newPass" placeholder="password">
+        <select id="newRole">
+          <option>owner</option>
+          <option>CEO</option>
+          <option>mods</option>
+          <option>partner</option>
+          <option>reseller</option>
+        </select>
+        <input id="newExp" placeholder="Exp (YYYY-MM-DD)">
+        <button id="btnCreate" class="primary">Create</button>
+      </div>
+
+      <button id="btnLogout" class="danger">🚪 Logout</button>
+    </div>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Manage Users</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="overlay">
+    <div class="card">
+      <h1>👥 User Management</h1>
+      <div id="profile"></div>
+      <div id="userControls" class="hidden">
+        <label>Tambah Akun</label>
+        <input id="newUser" placeholder="username">
+        <input id="newPass" placeholder="password">
+        <select id="newRole">
+          <option>owner</option>
+          <option>CEO</option>
+          <option>mods</option>
+          <option>partner</option>
+          <option>reseller</option>
+        </select>
+        <input id="newExp" placeholder="Exp (YYYY-MM-DD)">
+        <button id="btnCreate" class="primary">Create</button>
+      </div>
+      <table>
+        <thead><tr><th>Username</th><th>Role</th><th>Action</th></tr></thead>
+        <tbody id="usersTbody"></tbody>
+      </table>
+      <a href="dashboard.html" class="primary">⬅️ Back</a>
+    </div>
+  </div>
+  <script src="js/common.js"></script>
+  <script src="js/users.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Manage Tokens</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="overlay">
+    <div class="card">
+      <h1>🔑 Token Management</h1>
+      <div id="profile"></div>
+      <div id="tokenControls" class="hidden">
+        <input id="tokenValue" placeholder="token value">
+        <button id="btnAddToken" class="primary">Add Token</button>
+      </div>
+      <table>
+        <thead><tr><th>Token</th><th>Owner</th><th>Action</th></tr></thead>
+        <tbody id="tokensTbody"></tbody>
+      </table>
+      <a href="dashboard.html" class="primary">⬅️ Back</a>
+    </div>
+  </div>
+  <script src="js/common.js"></script>
+  <script src="js/tokens.js"></script>
+</body>
+</html>

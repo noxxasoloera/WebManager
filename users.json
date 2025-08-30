@@ -1,0 +1,23 @@
+[
+  {
+    "username": "rafli",
+    "password": "12345",
+    "role": "owner",
+    "exp": "2025-12-31",
+    "created_at": "2025-08-30T10:15:00Z"
+  },
+  {
+    "username": "budi",
+    "password": "qwerty",
+    "role": "ceo",
+    "exp": "2025-11-15",
+    "created_at": "2025-08-29T08:00:00Z"
+  },
+  {
+    "username": "andi",
+    "password": "pass123",
+    "role": "mods",
+    "exp": "2025-09-30",
+    "created_at": "2025-08-25T12:30:00Z"
+  }
+]

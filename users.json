@@ -1,4 +1,0 @@
-[
-  {"username":"admin","password":"123","role":"owner","exp":"2025-12-31"},
-  {"username":"ceo1","password":"ceo123","role":"CEO","exp":"2025-11-30"}
-]

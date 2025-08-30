@@ -1,0 +1,32 @@
+[
+  {
+    "username": "admin",
+    "password": "123",
+    "role": "owner",
+    "exp": "2030-01-01"
+  },
+  {
+    "username": "boss",
+    "password": "123",
+    "role": "ceo",
+    "exp": "2027-01-01"
+  },
+  {
+    "username": "mod",
+    "password": "123",
+    "role": "mods",
+    "exp": "2026-01-01"
+  },
+  {
+    "username": "partner",
+    "password": "123",
+    "role": "partner",
+    "exp": "2025-12-31"
+  },
+  {
+    "username": "resell",
+    "password": "123",
+    "role": "reseller",
+    "exp": "2025-12-31"
+  }
+]

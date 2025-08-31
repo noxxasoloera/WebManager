@@ -1,3 +1,12 @@
 [
-  { "username": "daffa", "password": "1", "role": "admin" }
+  {
+    "username": "admin",
+    "password": "1",
+    "role": "admin"
+  },
+  {
+    "username": "reseller",
+    "password": "reseller123",
+    "role": "user"
+  }
 ]

@@ -1,9 +1,9 @@
 // =======================
 // Konfigurasi
 // =======================
-const USERS_DB      = "settings/users.json";
-const API_NUMBERS   = 'https://api.github.com/repos/noxxasoloera/WebManager/contents/numbers.json';
-const API_TOKENS    = 'https://api.github.com/repos/noxxasoloera/WebManager/contents/tokens.json';
+const API_USERS   = 'https://api.github.com/repos/noxxasoloera/WebManager/contents/settings/users.json';
+const API_NUMBERS = 'https://api.github.com/repos/noxxasoloera/WebManager/contents/settings/numbers.json';
+const API_TOKENS  = 'https://api.github.com/repos/noxxasoloera/WebManager/contents/settings/tokens.json';
 const TOKEN_GITHUB  = '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';  // ganti dengan token GitHub repo kamu
 
 let state = { 
@@ -13,7 +13,8 @@ let state = {
   numbers:[], 
   tokens:[], 
   numbersSha:null,
-  tokensSha:null
+  tokensSha:null,
+  usersSha:null        // << tambahan
 };
 
 // =======================
@@ -39,19 +40,13 @@ function setView(id){
 // Login / Session
 // =======================
 async function loadLogins(){
-  if(state.loginList.length === 0){
-    const res = await fetch(USERS_DB);
-    if(!res.ok) throw new Error("Gagal load users.json");
-    state.loginList = await res.json();
-  }
-  const stored = localStorage.getItem("accounts");
-  if(stored){
-    const arr = JSON.parse(stored);
-    arr.forEach(u=>{
-      if(!state.loginList.some(x=>x.username===u.username)){
-        state.loginList.push(u);
-      }
-    });
+  const res = await githubGet(API_USERS);
+  if(res.notFound){ 
+    state.loginList = []; 
+    state.usersSha = null; 
+  } else {
+    state.loginList = Array.isArray(res.content) ? res.content : [];
+    state.usersSha = res.sha;
   }
 }
 
@@ -101,10 +96,11 @@ function renderAccounts(){
     body.appendChild(tr);
   });
   document.querySelectorAll('[data-deluser]').forEach(b=>{
-    b.onclick = ()=>{
+    b.onclick = async ()=>{
       if(!confirm('Hapus user '+b.dataset.deluser+' ?')) return;
       state.loginList = state.loginList.filter(x=>x.username!==b.dataset.deluser);
-      localStorage.setItem("accounts", JSON.stringify(state.loginList));
+      const result = await githubPut(API_USERS, state.loginList, `delete user ${b.dataset.deluser}`, state.usersSha);
+      state.usersSha = result.content?.sha || result.sha || state.usersSha;
       renderAccounts();
       toast(accMsg, "User dihapus", true);
     }
@@ -114,9 +110,13 @@ function renderAccounts(){
 async function createAccount(u,p,r){
   if(!u||!p) throw new Error('Username & password wajib');
   if(state.loginList.some(x=>x.username===u)) throw new Error('Username sudah ada');
+
   const newAcc = {username:u, password:p, role:r};
   state.loginList.push(newAcc);
-  localStorage.setItem("accounts", JSON.stringify(state.loginList));
+
+  const result = await githubPut(API_USERS, state.loginList, `add user ${u}`, state.usersSha);
+  state.usersSha = result.content?.sha || result.sha || state.usersSha;
+
   renderAccounts();
 }
 

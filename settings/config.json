@@ -1,0 +1,13 @@
+{
+  "github": {
+    "owner": "noxxasoloera",
+    "repo": "WebManager",
+    "branch": "main",
+    "token": "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"
+  },
+  "files": {
+    "tokens": "tokens.json",
+    "numbers": "numbers.json",
+    "users": "settings/users.json"
+  }
+}

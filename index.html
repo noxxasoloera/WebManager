@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Token Manager - Cyberpunk</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Orbitron", sans-serif;
+      background: radial-gradient(circle at top, #0a0a0a, #000);
+      color: #fff;
+      overflow: hidden;
+    }
+
+    /* Fullscreen Center */
+    .center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    /* Login Card */
+    .login-card {
+      background: rgba(20, 20, 20, 0.85);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 0 25px #0ff, inset 0 0 10px #0ff;
+      text-align: center;
+      width: 320px;
+      backdrop-filter: blur(10px);
+    }
+    .login-card h2 {
+      margin-bottom: 1rem;
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff;
+    }
+    .login-card input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 8px;
+      background: #111;
+      color: #0ff;
+      font-size: 14px;
+      outline: none;
+      box-shadow: inset 0 0 5px #0ff;
+    }
+    .login-card button {
+      margin-top: 1rem;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #0ff, #09f);
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .login-card button:hover {
+      transform: scale(1.05);
+    }
+
+    /* Dashboard */
+    .dashboard {
+      display: none;
+      height: 100vh;
+      flex-direction: column;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(15,15,15,0.8);
+      box-shadow: 0 0 15px #0ff;
+    }
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .profile-info span {
+      font-size: 14px;
+      color: #0ff;
+    }
+    .menu {
+      position: relative;
+    }
+    .menu i {
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      background: #111;
+      border: 1px solid #0ff;
+      border-radius: 10px;
+      margin-top: 10px;
+      box-shadow: 0 0 15px #0ff;
+      overflow: hidden;
+    }
+    .dropdown button {
+      background: none;
+      border: none;
+      padding: 10px 15px;
+      color: #0ff;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+    }
+    .dropdown button:hover {
+      background: #0ff;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <!-- LOGIN -->
+  <div class="center" id="loginPage">
+    <div class="login-card">
+      <h2>🔐 Login</h2>
+      <input type="text" id="username" placeholder="Username"/>
+      <input type="password" id="password" placeholder="Password"/>
+      <button onclick="login()">Masuk</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="dashboard" id="dashboard">
+    <div class="header">
+      <div class="profile-info">
+        <strong id="profileName">Username</strong>
+        <span id="profileRole">Role</span>
+        <span id="profileExp">Exp: 0</span>
+        <span id="clock">00:00:00</span>
+      </div>
+      <div class="menu">
+        <i class="fas fa-ellipsis-v" onclick="toggleMenu()"></i>
+        <div class="dropdown" id="menuDropdown"></div>
+      </div>
+    </div>
+    <div id="content" style="flex:1; display:flex; align-items:center; justify-content:center; font-size:20px; color:#0ff;">
+      🚀 Selamat datang di Token Manager
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
